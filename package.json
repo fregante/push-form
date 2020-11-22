@@ -1,0 +1,45 @@
+{
+	"name": "push-form",
+	"version": "0.0.0",
+	"description": "Zero-effort nanomodule to submit a <form> element via `fetch` and receive the response.",
+	"keywords": [
+		"fetch",
+		"submit",
+		"post",
+		"form",
+		"js",
+		"xhr",
+		"ajax",
+		"file",
+		"upload"
+	],
+	"repository": "fregante/push-form",
+	"license": "MIT",
+	"type": "module",
+	"main": "index.js",
+	"module": "index.js",
+	"types": "./index.d.ts",
+	"files": [
+		"index.js",
+		"index.d.ts"
+	],
+	"scripts": {
+		"build": "tsc",
+		"prepack": "tsc --sourceMap false",
+		"test": "tsc && xo",
+		"watch": "tsc --watch"
+	},
+	"xo": {
+		"envs": [
+			"browser"
+		],
+		"rules": {
+			"import/no-mutable-exports": "off"
+		}
+	},
+	"devDependencies": {
+		"@sindresorhus/tsconfig": "^0.8.0",
+		"typescript": "^4.1.2",
+		"xo": "^0.35.0"
+	}
+}
