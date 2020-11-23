@@ -4,9 +4,9 @@ async function pushForm(
 ): Promise<Response> {
 	const fields = new FormData(form);
 	const url = new URL(form.action, location.origin);
-	const headers = new Headers(init.headers);
-	if (!headers.has('Accept')) {
-		headers.append('Accept', 'text/html,application/xhtml+xml,application/xml');
+	init.headers = new Headers(init.headers);
+	if (!init.headers.has('Accept')) {
+		init.headers.append('Accept', 'text/html,application/xhtml+xml,application/xml');
 	}
 
 	init.method = form.method;
@@ -18,7 +18,7 @@ async function pushForm(
 		}
 	} else {
 		init.body = fields;
-		headers.append('Cache-Control', 'max-age=0');
+		init.headers.append('Cache-Control', 'max-age=0');
 	}
 
 	return (pushForm.fetch ?? fetch)(url.toString(), init);
