@@ -2,13 +2,26 @@ async function pushForm(
 	form: HTMLFormElement,
 	init: RequestInit = {}
 ): Promise<Response> {
-	// TODO: drop `as` after https://github.com/microsoft/TSJS-lib-generator/issues/741
-	init.body = new URLSearchParams(new FormData(form) as URLSearchParams);
-	init.method = form.method;
+	const fields = new FormData(form);
+	const url = new URL(form.action, location.origin);
 	const headers = new Headers(init.headers);
-	headers.append('Content-Type', 'application/x-www-form-urlencoded');
+	if (!headers.has('Accept')) {
+		headers.append('Accept', 'text/html,application/xhtml+xml,application/xml');
+	}
 
-	return (pushForm.fetch ?? fetch)(form.action, init);
+	init.method = form.method;
+	if (form.method === 'get') {
+		for (const [name, value] of fields) {
+			if (typeof value === 'string') {
+				url.searchParams.set(name, value);
+			}
+		}
+	} else {
+		init.body = fields;
+		headers.append('Cache-Control', 'max-age=0');
+	}
+
+	return (pushForm.fetch ?? fetch)(url.toString(), init);
 }
 
 // Silently allow the user to override the fetch globally
