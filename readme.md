@@ -41,33 +41,32 @@ Given a regular form element:
 </form>
 ```
 
-You can ajaxify it with this simple code:
+You can post it via `fetch` with:
 
 ```js
 import pushForm from 'push-form';
 
 const form = document.querySelector('form');
-form.addEventListener('submit', async event => {
-	if (form.checkValidity()) {
-		event.preventDefault();
+await pushForm(form);
+```
 
-		// The response is what `fetch` returns
-		const response = await pushForm(form);
-		if (response.ok) {
-			form.reset();
-			form.append('Form submitted!');
-		} else {
-			form.append('Aomething wrong happened');
-		}
-	}
+Or you can handle the submissing with:
+
+```js
+import {ajaxifyForm} from 'push-form';
+
+const form = document.querySelector('form');
+ajaxifyForm(form, {
+	onSuccess: () => {/* ✅ */},
+	onError: () => {/* ❌ */},
 });
 ```
 
 ## API
 
-### pushForm(formElement, fetchInit)
+### pushForm(formElement, requestInit)
 
-Returns a `Promise` that resolves with a `Reponse` exactly as `fetch` does.
+Returns a `Promise` that resolves with a `Response` exactly as `fetch` does.
 
 #### formElement
 
@@ -75,12 +74,44 @@ Type: `HTMLFormElement`
 
 The form to submit. Its `action` and `method` attributes will be used to create the HTTP request.
 
-#### fetchInit
+#### requestInit
 
-Type: `FetchInit` <br>
+Type: `object` <br>
 Example: `{headers: {Accept: 'application/json'}}`
 
 This matches the second parameter of [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/fetch), however the `body` and `method` will be overridden with what the `form` element specifies in its attributes.
+
+### ajaxifyForm(formElement, options)
+
+Stops the `submit` event of a form and uses `pushForm` instead. This returns a `function` that you can call to remove the `submit` handler.
+
+#### formElement
+
+Same as the one in `pushForm`
+
+#### options
+
+Type: `object`
+
+Optional submission/error handlers and configuration for the `fetch`.
+
+##### onSuccess
+
+Type: `function`<br>
+Example: `(fetchResponse) => {alert('The form was submitted!')}`
+
+It will be called when `fetch` makes the request and the server returns a successful response (`response.ok`)
+
+##### onError
+
+Type: `function`<br>
+Example: `(error) => {alert('Something happened:' + error.message)}`
+
+It will be called when `fetch` fails the request or if the server returns an error response (`response.ok === false`)
+
+##### requestInit
+
+Same as the one in `pushForm`.
 
 ## Related
 

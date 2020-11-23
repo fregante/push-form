@@ -24,9 +24,55 @@ async function pushForm(
 	return (pushForm.fetch ?? fetch)(url.toString(), init);
 }
 
-// Silently allow the user to override the fetch globally
+interface Options {
+	request?: RequestInit;
+	onSuccess?: (r: Response) => void | Promise<void>;
+	onError?: (r: unknown) => void | Promise<void>;
+}
+
+function onErrorDefault(error: unknown): void {
+	alert('The form couldn’t be submitted');
+	throw error;
+}
+
+function onSuccessDefault(): void {
+	alert('Thanks for your submission');
+}
+
+function ajaxifyForm(
+	form: HTMLFormElement,
+	{
+		onSuccess = onSuccessDefault,
+		onError = onErrorDefault,
+		request = {}
+	}: Options = {}
+): () => void {
+	const submitHandler = async (event: Event) => {
+		event.preventDefault();
+		form.disable = true;
+		try {
+			const response = await pushForm(form, request);
+			if (!response.ok) {
+				throw new Error(response.statusText);
+			}
+
+			void onSuccess(response);
+		} catch (error: unknown) {
+			void onError(error);
+		}
+	};
+
+	form.addEventListener('submit', submitHandler);
+
+	return () => {
+		form.removeEventListener('submit', submitHandler);
+	};
+}
+
+// Allow the user to override the fetch globally
 namespace pushForm {
 	export let fetch: typeof window.fetch;
 }
 
 export default pushForm;
+export {ajaxifyForm};

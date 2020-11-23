@@ -34,7 +34,8 @@
 			"browser"
 		],
 		"rules": {
-			"import/no-mutable-exports": "off"
+			"import/no-mutable-exports": "off",
+			"no-alert": "off"
 		}
 	},
 	"devDependencies": {
