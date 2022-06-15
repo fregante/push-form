@@ -50,7 +50,7 @@ const form = document.querySelector('form');
 await pushForm(form);
 ```
 
-Or you can handle the submissing with:
+Or you can handle the submission with:
 
 ```js
 import {ajaxifyForm} from 'push-form';
