@@ -1,6 +1,6 @@
 {
 	"name": "push-form",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Zero-effort nanomodule to submit a <form> element via `fetch` and receive the response.",
 	"keywords": [
 		"form",
