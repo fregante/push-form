@@ -1,12 +1,21 @@
-async function pushForm(
+let localFetch = globalThis.fetch;
+
+export function setFetch(fetch: typeof localFetch): void {
+	localFetch = fetch;
+}
+
+export default async function pushForm(
 	form: HTMLFormElement,
-	init: RequestInit = {}
+	init: RequestInit = {},
 ): Promise<Response> {
 	const fields = new FormData(form);
 	const url = new URL(form.getAttribute('action')!, location.origin);
 	init.headers = new Headers(init.headers);
 	if (!init.headers.has('Accept')) {
-		init.headers.append('Accept', 'text/html,application/xhtml+xml,application/xml');
+		init.headers.append(
+			'Accept',
+			'text/html,application/xhtml+xml,application/xml',
+		);
 	}
 
 	init.method = form.method;
@@ -21,7 +30,7 @@ async function pushForm(
 		init.headers.append('Cache-Control', 'max-age=0');
 	}
 
-	return (pushForm.fetch ?? fetch)(url.toString(), init);
+	return localFetch(url.href, init);
 }
 
 interface Options {
@@ -39,17 +48,16 @@ function onSuccessDefault(): void {
 	alert('Thanks for your submission');
 }
 
-function ajaxifyForm(
+export function ajaxifyForm(
 	form: HTMLFormElement,
 	{
 		onSuccess = onSuccessDefault,
 		onError = onErrorDefault,
-		request = {}
-	}: Options = {}
+		request = {},
+	}: Options = {},
 ): () => void {
 	const submitHandler = async (event: Event) => {
 		event.preventDefault();
-		form.disable = true;
 		try {
 			const response = await pushForm(form, request);
 			if (!response.ok) {
@@ -68,11 +76,3 @@ function ajaxifyForm(
 		form.removeEventListener('submit', submitHandler);
 	};
 }
-
-// Allow the user to override the fetch globally
-namespace pushForm {
-	export let fetch: typeof window.fetch;
-}
-
-export default pushForm;
-export {ajaxifyForm};

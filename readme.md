@@ -3,19 +3,9 @@
 [badge-gzip]: https://img.shields.io/bundlephobia/minzip/push-form.svg?label=gzipped
 [link-bundlephobia]: https://bundlephobia.com/result?p=push-form
 
-> Zero-effort nanomodule to submit a `<form>` element via `fetch` and receive the response.
+> Like `form.submit()`, but ajaxed. Lightweight, modern, promisified, uses `fetch`
 
-Sit back and relax ’cuz `push-form` will take care of all your form-submitting needs. — As long as all you need is to submit a `<form>` element as-is.
-
-You'll just need:
-
-```js
-pushForm(document.querySelector('form')).then(response => {
-	if (response.ok) {
-		alert('Thanks for your submission!');
-	}
-});
-```
+Instead of causing a page load like `form.submit()` does, you can use `pushForm(form)` to send a form via `fetch`. It automatically reads all the fields using modern APIs and performs the request exactly as described by the `form` attributes.
 
 ## Install
 
@@ -47,10 +37,16 @@ You can post it via `fetch` with:
 import pushForm from 'push-form';
 
 const form = document.querySelector('form');
-await pushForm(form);
+form.addEventListener('submit', async event => {
+	event.preventDefault();
+	const response = await pushForm();
+	if (response.ok) {
+		alert('Thanks for your submission!');
+	}
+});
 ```
 
-Or you can handle the submissing with:
+Or use `ajaxifyForm` to have it handle the user submission automatically:
 
 ```js
 import {ajaxifyForm} from 'push-form';
