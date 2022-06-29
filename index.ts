@@ -9,7 +9,7 @@ export default async function pushForm(
 	init: RequestInit = {},
 ): Promise<Response> {
 	const fields = new FormData(form);
-	const url = new URL(form.getAttribute('action')!, location.origin);
+	const url = new URL(form.getAttribute('action') ?? '', location.origin);
 	init.headers = new Headers(init.headers);
 	if (!init.headers.has('Accept')) {
 		init.headers.append(
